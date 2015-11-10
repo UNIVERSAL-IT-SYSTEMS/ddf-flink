@@ -1,4 +1,5 @@
 import Common._
+import AssemblyKeys._
 
 organization := "io.ddf"
 
@@ -38,7 +39,7 @@ lazy val flink = project.in(file("flink")).settings(commonSettings: _*).settings
   name := "ddf-flink",
   pomExtra := submodulePom,
   libraryDependencies ++= Seq(
-    "io.ddf" %% "ddf_core" % ddfVersion,
+    "io.ddf" %% "ddf_core" % ddfVersion % "provided",
     "org.apache.flink" % "flink-core" % flinkVersion,
     "org.apache.flink" % "flink-java" % flinkVersion,
     "org.apache.flink" % "flink-scala" % flinkVersion,

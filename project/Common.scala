@@ -1,5 +1,7 @@
 import sbt._
 import sbt.Keys._
+import sbtassembly.Plugin._
+import AssemblyKeys._
 
 
 object Common {
@@ -13,6 +15,18 @@ object Common {
   lazy val theScalaVersion = "2.10.4"
 
   lazy val flinkVersion = "0.9.2-SNAPSHOT"
+
+  lazy val flinkAssemblySettings = assemblySettings ++ Seq(
+    mergeStrategy in assembly := {
+      case m if m.toLowerCase.endsWith("manifest.mf") => MergeStrategy.discard
+      case m if m.toLowerCase.endsWith("eclipsef.sf") => MergeStrategy.discard
+      case m if m.toLowerCase.endsWith("eclipsef.rsa") => MergeStrategy.discard
+      case "reference.conf" => MergeStrategy.concat
+      case "application.conf"                            => MergeStrategy.concat
+      case _ => MergeStrategy.first
+    },
+    test in assembly := {}
+  )
 
   lazy val submodulePom = (
     <!--
@@ -65,7 +79,7 @@ object Common {
       </build>
     )
 
-  lazy val commonSettings = Seq(
+  lazy val commonSettings = flinkAssemblySettings ++ Seq(
     organization := "io.ddf",
     version := ddfVersion,
     retrieveManaged := true, // Do create a lib_managed, so we have one place for all the dependency jars to copy to slaves, if needed
